@@ -12,6 +12,5 @@ namespace GoogleHashCode_2019.Properties
             Tags = new List<string>();
             Orientation = orientation;
         }
-
     }
 }

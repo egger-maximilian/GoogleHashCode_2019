@@ -7,7 +7,12 @@ namespace GoogleHashCode_2019
     public class ImageCollection
     {
         private static ImageCollection instance;
-        private static readonly string[] sources = {"a_example.txt","c_memorable_moments.txt",  "e_shiny_selfies.txt"," b_lovely_landscapes.txt", "d_pet_pictures.txt"};
+        private static readonly string[] sources = {
+        "a_example.txt",
+        "c_memorable_moments.txt",  
+        "e_shiny_selfies.txt", 
+        "b_lovely_landscapes.txt", 
+        "d_pet_pictures.txt"};
         private static char currentSource = '.';
 
         private Dictionary<string, int> tags;
@@ -15,24 +20,20 @@ namespace GoogleHashCode_2019
         private ImageCollection(char source)
         {
             tags = new Dictionary<string, int>();
-            LoadImagesFromSource(source);
+            loadImagesFromSource(source);
             ImageCollection.instance = this;
         }
 
         public static ImageCollection getInstance(char source)
         {
-            if (instance != null && currentSource == source) 
-                return instance;
-            else
-            {
+            if (instance != null && currentSource == source)
+                return instance; 
                 return new ImageCollection(source);
-            }
+
         }
 
         private static void loadImagesFromSource(char source)
         {
-            //TODO-> load images form code
-            //add 1 to corresponding tags
             int i = -1;
             switch (source)
             {
@@ -50,7 +51,7 @@ namespace GoogleHashCode_2019
                     break;
             }
 
-            string[] data = File.ReadAllLines(@"" + sources[i]);
+            string[] data = File.ReadAllLines(@"../../sources/" + sources[i]);
         }
     }
 }

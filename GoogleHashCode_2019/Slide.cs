@@ -47,7 +47,7 @@ namespace GoogleHashCode_2019
         }
         public int differenceTagCount(Slide s)
         {
-
+            return 0;
         }
     }
 }

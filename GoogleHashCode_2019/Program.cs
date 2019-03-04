@@ -6,10 +6,9 @@ namespace GoogleHashCode_2019
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            Console.WriteLine("This is going to be really funny, ya know");
-            Console.WriteLine("plez work ");
-            Console.WriteLine("..");
+            Console.WriteLine("Google Hash Code 2019");
+            Console.WriteLine("");
+
         }
     }
 }

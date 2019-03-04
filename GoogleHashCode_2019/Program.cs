@@ -9,6 +9,7 @@ namespace GoogleHashCode_2019
             Console.WriteLine("Hello World!");
             Console.WriteLine("This is going to be really funny, ya know");
             Console.WriteLine("plez work ");
+            Console.WriteLine("..");
         }
     }
 }

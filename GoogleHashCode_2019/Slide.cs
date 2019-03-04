@@ -8,9 +8,15 @@ namespace GoogleHashCode_2019
     {
         public Image[] Images;
 
-        public Slide()
+        public Slide(Image i)
         {
-
+            Images[0] = i;
+            Images[1] = null;
+        }
+        public Slide(Image i1, Image i2)
+        {
+            Images[0] = i1;
+            Images[1] = i2;
         }
 
         public List<string> getTags()
@@ -31,23 +37,24 @@ namespace GoogleHashCode_2019
 
         public int getScore(Slide right)
         {
-            return Math.Min(commonTagCount(right), differenceTagCount(right));
-            //redo
+            List<string> rightTags = right.getTags();
+            List<string> thisTags = getTags();
+            int commonCount = 0;
+            int differentCount = 0;
+            foreach (string item in thisTags) {
+                if (rightTags.Contains(item))
+                    commonCount++;
+                else
+                    differentCount++; 
+            }
+            int score = Math.Min(differentCount, commonCount);
+            differentCount = 0;
+            foreach (string item in rightTags)
+                if (thisTags.Contains(item))
+                    differentCount++;
+            return Math.Min(score, differentCount);
         }
 
-        public int commonTagCount(Slide s)
-        {
-            int count = 0;
-            List<string> tagsOther = s.getTags();
-            foreach(string t in getTags())
-                if (tagsOther.Contains(t))
-                    count++;
 
-            return count;
-        }
-        public int differenceTagCount(Slide s)
-        {
-            return 0;
-        }
     }
 }

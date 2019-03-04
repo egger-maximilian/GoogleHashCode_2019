@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using GoogleHashCode_2019.Properties;
 
 namespace GoogleHashCode_2019
 {
@@ -16,42 +17,72 @@ namespace GoogleHashCode_2019
         private static char currentSource = '.';
 
         private Dictionary<string, int> tags;
+        private List<Image> images;
+
+
 
         private ImageCollection(char source)
         {
             tags = new Dictionary<string, int>();
             loadImagesFromSource(source);
-            ImageCollection.instance = this;
         }
 
+        public static Dictionary<string, int> getTags()
+        {
+            return instance.tags;
+        }
+        public static List<Image> getImages()
+        {
+            return instance.images;
+        }
         public static ImageCollection getInstance(char source)
         {
             if (instance != null && currentSource == source)
                 return instance; 
-                return new ImageCollection(source);
+            return instance =new ImageCollection(source);
 
         }
 
-        private static void loadImagesFromSource(char source)
+        private void loadImagesFromSource(char source)
         {
-            int i = -1;
+            int sourceIndex = -1;
             switch (source)
             {
-                case 'a':i = 0;
+                case 'a':
+                    sourceIndex = 0;
                     break;
-                case 'b':i = 3;
+                case 'b':
+                    sourceIndex = 3;
                     break;
-                case 'c':i = 1;
+                case 'c':
+                    sourceIndex = 1;
                     break;
-                case 'd': i = 4;
+                case 'd':
+                    sourceIndex = 4;
                     break;
-                case 'e': i = 2;
+                case 'e':
+                    sourceIndex = 2;
                     break;
                 default:
                     break;
             }
-
-            string[] data = File.ReadAllLines(@"../../sources/" + sources[i]);
+            string[] data = File.ReadAllLines(@"../../sources/" + sources[sourceIndex]);
+            images = new List<Image>();
+            for(int i=1; i<data.Length; i++)
+            {
+                string[] img = data[i].Split(' ');
+                List<string> t = new List<string>(img);
+                t.RemoveAt(0);
+                t.RemoveAt(0);
+                foreach(string s in t)
+                {
+                    if (tags.ContainsKey(s))
+                        tags[s]++;
+                    else
+                        tags[s] = 1;
+                }
+                images.Add(new Image(t,img[0][0]));
+            }
         }
     }
 }

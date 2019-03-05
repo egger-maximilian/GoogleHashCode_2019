@@ -65,9 +65,6 @@ namespace GoogleHashCode_2019.Properties
                 s.Add(new Slide(v[0], v[v.Count - 1]));
             SlideShow show = new SlideShow();
             show.addSlide(s[0]);
-<<<<<<< HEAD
-           
-=======
             int tmpScore = 0;
             int tmpIndex = 0;
             for(int i=1; i<s.Count; i++)
@@ -75,7 +72,6 @@ namespace GoogleHashCode_2019.Properties
                 if (show.Slides[show.Slides.Count - 1].getScore(s[i]) > tmpScore)
                     tmpIndex = i;
             }
->>>>>>> c3e586a... .
 
         }
         void Bw_ProgressChanged(object sender, ProgressChangedEventArgs e)

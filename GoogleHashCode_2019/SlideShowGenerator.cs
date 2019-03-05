@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GoogleHashCode_2019.Properties
 {
@@ -29,7 +30,6 @@ namespace GoogleHashCode_2019.Properties
         {
             List<Slide> s = new List<Slide>();
             List<Image> v = new List<Image>();
-            int averageTags = ImageCollection.getAverageTagCount();
             foreach (Image item in ImageCollection.getImages())
             {
                 if (item.Orientation == 'H')
@@ -52,7 +52,6 @@ namespace GoogleHashCode_2019.Properties
         {
             List<Slide> s = new List<Slide>();
             List<Image> v = new List<Image>();
-            int averageTags = ImageCollection.getAverageTagCount();
             foreach (Image item in ImageCollection.getImages())
             {
                 if (item.Orientation == 'H')
@@ -61,6 +60,14 @@ namespace GoogleHashCode_2019.Properties
                     v.Add(item);
             }
             v.Sort((a, b) => { return a.Tags.Count.CompareTo(b.Tags.Count()); });
+            while (v.Count > 1)
+            {
+                var first = v.FirstOrDefault();
+                var other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault(img=> img.ID != first.ID );
+                s.Add(new Slide(first, other));
+                v.Remove(first);
+                v.Remove(other);
+            }
             if (s.Count == 0)
                 s.Add(new Slide(v[0], v[v.Count - 1]));
             SlideShow show = new SlideShow();
@@ -69,10 +76,15 @@ namespace GoogleHashCode_2019.Properties
             int tmpIndex = 0;
             for(int i=1; i<s.Count; i++)
             {
-                if (show.Slides[show.Slides.Count - 1].getScore(s[i]) > tmpScore)
-                    tmpIndex = i;
+                Parallel.For(0, show.Slides.Count, (index) =>
+                 {
+                     if (show.Slides[index].getScore(s[i]) > tmpScore)
+                         tmpIndex = i;
+                 });
+                show.addSlide(s[i], tmpIndex);
+                bw.ReportProgress(s.Count / i * 100);
             }
-
+            Console.WriteLine("DONE! "+show.getScore());
         }
         void Bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {

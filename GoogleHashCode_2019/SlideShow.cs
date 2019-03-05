@@ -23,5 +23,10 @@ namespace GoogleHashCode_2019
         {
             Slides.Add(s);
         }
+
+        public void addSlide(Slide s, int index)
+        {
+            Slides.Insert(index, s);
+        }
     }
 }

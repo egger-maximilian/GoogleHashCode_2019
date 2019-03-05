@@ -18,7 +18,6 @@ namespace GoogleHashCode_2019
 
         private Dictionary<string, int> tags;
         private List<Image> images;
-        private List<int> tagCounter;
 
 
 
@@ -42,13 +41,6 @@ namespace GoogleHashCode_2019
                 return instance; 
             return instance =new ImageCollection(source);
 
-        }
-        public static int getAverageTagCount()
-        {
-            int avg = 0;
-            for (int i = 0; i < instance.tagCounter.Count; i++)
-                avg += (i * instance.tagCounter[i]);
-            return avg / instance.images.Count;
         }
 
         private void loadImagesFromSource(char source)
@@ -77,17 +69,11 @@ namespace GoogleHashCode_2019
             string[] data = File.ReadAllLines(@"../../sources/" + sources[sourceIndex]);
             images = new List<Image>();
             tags = new Dictionary<string, int>();
-            tagCounter = new List<int>();
             for (int i = 1; i < data.Length; i++)
             {
                 string[] img = data[i].Split(' ');
                 List<string> t = new List<string>(img);
                 t.RemoveAt(0);
-                int tagCount = int.Parse(t[0]);
-                if (tagCounter.Contains(tagCount))
-                    tagCounter[tagCount]++;
-                else
-                    tagCounter[tagCount] = 1;
                 t.RemoveAt(0);
                 foreach(string s in t)
                 {

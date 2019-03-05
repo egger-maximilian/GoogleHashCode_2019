@@ -15,6 +15,8 @@ namespace GoogleHashCode_2019
             ImageCollection x = ImageCollection.getInstance(c);
             foreach (Image i in ImageCollection.getImages())
                 Console.WriteLine(i);
+            SlideShowGenerator gen = new SlideShowGenerator();
+            gen.generateSlideshow(c);
 
         }
     }

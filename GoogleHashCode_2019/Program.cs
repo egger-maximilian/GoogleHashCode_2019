@@ -17,6 +17,7 @@ namespace GoogleHashCode_2019
                 Console.WriteLine(i);
             SlideShowGenerator gen = new SlideShowGenerator();
             gen.generateSlideshow(c);
+            Console.ReadLine();
 
         }
     }

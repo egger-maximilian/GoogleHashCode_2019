@@ -14,13 +14,14 @@ namespace GoogleHashCode_2019.Properties
             bw = new BackgroundWorker();
             bw.ProgressChanged += Bw_ProgressChanged;
             bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
-            bw.DoWork+=Bw_DoWork;
 
         }
             
         public void generateSlideshow(char i)
         {
             ImageCollection.getInstance(i);
+            bw.WorkerReportsProgress = true;
+
             bw.DoWork += Bw_DoWork;
             bw.RunWorkerAsync();
         }
@@ -59,22 +60,19 @@ namespace GoogleHashCode_2019.Properties
                 else
                     v.Add(item);
             }
-            v.Sort((a, b) => { return a.Tags.Count.CompareTo(b.Tags.Count()); });
             while (v.Count > 1)
             {
                 var first = v.FirstOrDefault();
-                var other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault(img=> img.ID != first.ID );
+                var other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault(img => img.ID != first.ID);
                 s.Add(new Slide(first, other));
                 v.Remove(first);
                 v.Remove(other);
             }
-            if (s.Count == 0)
-                s.Add(new Slide(v[0], v[v.Count - 1]));
             SlideShow show = new SlideShow();
             show.addSlide(s[0]);
             int tmpScore = 0;
             int tmpIndex = 0;
-            for(int i=1; i<s.Count; i++)
+            for (int i=1; i<s.Count; i++)
             {
                 Parallel.For(0, show.Slides.Count, (index) =>
                  {
@@ -92,7 +90,7 @@ namespace GoogleHashCode_2019.Properties
         }
         void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Console.WriteLine("Complete!"+e.Result);
+            Console.WriteLine("Complete!");
         }
 
     }

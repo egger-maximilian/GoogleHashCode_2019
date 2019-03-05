@@ -14,6 +14,7 @@ namespace GoogleHashCode_2019.Properties
             bw.ProgressChanged += Bw_ProgressChanged;
             bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
             bw.DoWork+=Bw_DoWork;
+
         }
 
         void Bw_DoWork(object sender, DoWorkEventArgs e)
@@ -29,6 +30,14 @@ namespace GoogleHashCode_2019.Properties
                     v.Add(item);
             }
             v.Sort((a, b) => { return a.Tags.Count.CompareTo(b.Tags.Count()); });
+            if (s.Count == 0)
+                s.Add(new Slide(v[0], v[v.Count - 1]));
+            SlideShow show = new SlideShow();
+            show.addSlide(s[0]);
+            for(int i=1; i<s.Count; i++)
+            {
+                int tmpScore = 
+            }
 
         }
         void Bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -37,7 +46,7 @@ namespace GoogleHashCode_2019.Properties
         }
         void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Console.WriteLine("Complete!");
+            Console.WriteLine("Complete!"+e.Result);
         }
 
     }

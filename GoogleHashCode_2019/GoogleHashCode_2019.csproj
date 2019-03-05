@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,8 +40,13 @@
     <Compile Include="SlideShow.cs" />
     <Compile Include="SlideShowGenerator.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="sources\" />
+    <Content Include="sources\a_example.txt" />
+    <Content Include="sources\b_lovely_landscapes.txt" />
+    <Content Include="sources\c_memorable_moments.txt" />
+    <Content Include="sources\d_pet_pictures.txt" />
+    <Content Include="sources\e_shiny_selfies.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

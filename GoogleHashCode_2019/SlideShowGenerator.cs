@@ -17,6 +17,30 @@ namespace GoogleHashCode_2019.Properties
 
         }
 
+
+        void Bw_Other_DoWork(object sender, DoWorkEventArgs e)
+        {
+            List<Slide> s = new List<Slide>();
+            List<Image> v = new List<Image>();
+            int averageTags = ImageCollection.getAverageTagCount();
+            foreach (Image item in ImageCollection.getImages())
+            {
+                if (item.Orientation == 'H')
+                    s.Add(new Slide(item));
+                else
+                    v.Add(item);
+            }
+
+            while (v.Count > 1)
+            {
+                var first = v.FirstOrDefault();
+                var other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault();
+                s.Add(new Slide(first,other));
+                v.Remove(first);
+                v.Remove(other);
+            }
+        }
+
         void Bw_DoWork(object sender, DoWorkEventArgs e)
         {
             List<Slide> s = new List<Slide>();
@@ -34,10 +58,7 @@ namespace GoogleHashCode_2019.Properties
                 s.Add(new Slide(v[0], v[v.Count - 1]));
             SlideShow show = new SlideShow();
             show.addSlide(s[0]);
-            for(int i=1; i<s.Count; i++)
-            {
-                int tmpScore = 
-            }
+           
 
         }
         void Bw_ProgressChanged(object sender, ProgressChangedEventArgs e)

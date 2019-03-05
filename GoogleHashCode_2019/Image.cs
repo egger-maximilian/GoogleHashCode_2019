@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoogleHashCode_2019.Properties
 {
@@ -21,6 +22,11 @@ namespace GoogleHashCode_2019.Properties
                 t += s+" ";
             });
             return "Image: " + Orientation + " " + t;
+        }
+
+        public List<string> Merge(List<string> argTags)
+        {
+            return Tags.Union(argTags).ToList();
         }
     }
 }

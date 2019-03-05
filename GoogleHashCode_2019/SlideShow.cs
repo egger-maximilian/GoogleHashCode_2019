@@ -18,5 +18,10 @@ namespace GoogleHashCode_2019
                 score += Slides[i].getScore(Slides[i + 1]);
             return score;
         }
+
+        public void addSlide(Slide s)
+        {
+            Slides.Add(s);
+        }
     }
 }

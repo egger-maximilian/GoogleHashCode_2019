@@ -38,6 +38,7 @@
     <Compile Include="ImageCollection.cs" />
     <Compile Include="Slide.cs" />
     <Compile Include="SlideShow.cs" />
+    <Compile Include="SlideShowGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="sources\" />

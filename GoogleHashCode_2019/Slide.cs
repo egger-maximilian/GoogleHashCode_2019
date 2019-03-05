@@ -50,7 +50,7 @@ namespace GoogleHashCode_2019
             int score = Math.Min(differentCount, commonCount);
             differentCount = 0;
             foreach (string item in rightTags)
-                if (thisTags.Contains(item))
+                if (!thisTags.Contains(item))
                     differentCount++;
             return Math.Min(score, differentCount);
         }

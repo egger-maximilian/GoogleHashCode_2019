@@ -96,7 +96,7 @@ namespace GoogleHashCode_2019
                     else
                         tags[s] = 1;
                 }
-                images.Add(new Image(t,img[0][0]));
+                images.Add(new Image(t,img[0][0], images.Count));
             }
         }
     }

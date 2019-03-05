@@ -6,10 +6,12 @@ namespace GoogleHashCode_2019.Properties
 {
     public class Image
     {
+        public int ID;
         public List<string> Tags;
         public char Orientation;
-        public Image(List<string> tags, char orientation)
+        public Image(List<string> tags, char orientation, int ID)
         {
+            this.ID = ID;
             Tags = tags;
             Orientation = orientation;
         }

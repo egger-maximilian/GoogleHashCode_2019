@@ -66,7 +66,9 @@ namespace GoogleHashCode_2019
                 default:
                     break;
             }
+            Console.WriteLine("Reading images...");
             string[] data = File.ReadAllLines(@"../../sources/" + sources[sourceIndex]);
+            Console.WriteLine("Images read. Allocating resources...");
             images = new List<Image>();
             tags = new Dictionary<string, int>();
             for (int i = 1; i < data.Length; i++)
@@ -84,6 +86,7 @@ namespace GoogleHashCode_2019
                 }
                 images.Add(new Image(t,img[0][0], images.Count));
             }
+            Console.WriteLine("Images loaded.");
         }
     }
 }

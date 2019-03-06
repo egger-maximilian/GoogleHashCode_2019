@@ -8,9 +8,12 @@ namespace GoogleHashCode_2019.Properties
 {
     public class SlideShowGenerator
     {
+        private System.Diagnostics.Stopwatch Stopwatch;
         private BackgroundWorker bw;
         public SlideShowGenerator()
         {
+            Stopwatch = new System.Diagnostics.Stopwatch();
+
             bw = new BackgroundWorker();
             bw.ProgressChanged += Bw_ProgressChanged;
             bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
@@ -42,6 +45,7 @@ namespace GoogleHashCode_2019.Properties
             while (v.Count > 1)
             {
                 var first = v.FirstOrDefault();
+
                 var other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault();
                 s.Add(new Slide(first,other));
                 v.Remove(first);
@@ -60,33 +64,71 @@ namespace GoogleHashCode_2019.Properties
                 else
                     v.Add(item);
             }
+            Console.WriteLine("Merge vertical pictures:");
+            int verticals = v.Count;
             while (v.Count > 1)
             {
-                var first = v.FirstOrDefault();
-                var other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault(img => img.ID != first.ID);
+                Image first = v.FirstOrDefault();
+                //maximize non common tags
+                Image other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault(img => img.ID != first.ID);
                 s.Add(new Slide(first, other));
+
                 v.Remove(first);
-                v.Remove(other);
+                v.Remove(other); 
+                bw.ReportProgress((int)Math.Truncate(100 * ((double)(verticals-v.Count) / verticals)));
+
             }
+            Stopwatch.Start();
             SlideShow show = new SlideShow();
             show.addSlide(s[0]);
             int tmpScore = 0;
-            int tmpIndex = 0;
-            for (int i=1; i<s.Count; i++)
+            int tmpIndex = 1;
+            while(show.Slides.Count < s.Count)
             {
+                tmpIndex = 0;
+                tmpScore = 0;
+                Slide current = show.Slides.LastOrDefault();
+                List<Slide> subSet = s.Where((arg) => arg.getTags().Intersect(current.getTags()).Any()).ToList<Slide>();
+
+                Parallel.For(0, subSet.Count, (index)=> {
+                    int sc = current.getScore(s[index]);
+                    if (sc>tmpScore)
+                    {
+                        tmpScore = sc;
+                        tmpIndex = index;
+                    }
+                });
+
+                show.Slides.Add(s[tmpIndex]);
+                bw.ReportProgress((int)Math.Truncate(100 * ((double)show.Slides.Count / s.Count)));
+            }
+
+
+
+
+            /*for (int i=1; i<s.Count; i++)
+            {
+                tmpScore = 0;
+                tmpIndex = 0;
                 Parallel.For(0, show.Slides.Count, (index) =>
                  {
-                     if (show.Slides[index].getScore(s[i]) > tmpScore)
-                         tmpIndex = i;
+                     if (show.Slides[index].getScore(s[i]) > tmpScore) {
+                         tmpScore = show.Slides[index].getScore(s[i]);
+                        tmpIndex = index;
+                    }
                  });
                 show.addSlide(s[i], tmpIndex);
-                bw.ReportProgress(s.Count / i * 100);
-            }
-            Console.WriteLine("DONE! "+show.getScore());
+                bw.ReportProgress((int)Math.Truncate(100 * ((double)i / s.Count)));
+           } */
+            Stopwatch.Stop();
+            Console.WriteLine("Done!\nScore: "+show.getScore());
+            Console.WriteLine("Time elapsed: "+Stopwatch.Elapsed.ToString());
         }
+
+
         void Bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine("Progresss: "+e.ProgressPercentage);
+            Console.WriteLine("["+Stopwatch.Elapsed.ToString()+"]Progresss: "+e.ProgressPercentage);
         }
         void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {

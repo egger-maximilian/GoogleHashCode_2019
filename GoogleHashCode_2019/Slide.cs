@@ -37,6 +37,11 @@ namespace GoogleHashCode_2019
             return left.getScore(this) + getScore(right);
         }
 
+        public int getScore(Image img)
+        {
+            return getScore(new Slide(img));
+        }
+
         public int getScore(Slide right)
         {
             List<string> rightTags = right.getTags();

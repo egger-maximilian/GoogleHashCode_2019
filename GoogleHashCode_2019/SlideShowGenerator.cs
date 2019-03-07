@@ -64,43 +64,67 @@ namespace GoogleHashCode_2019.Properties
                 else
                     v.Add(item);
             }
-            Console.WriteLine("Merge vertical pictures:");
+
             int verticals = v.Count;
+            Console.WriteLine("Merge vertical pictures: "+verticals +" of "+ ImageCollection.getImages().Count);
             while (v.Count > 1)
             {
                 Image first = v.FirstOrDefault();
                 //maximize non common tags
-                Image other = v.OrderByDescending(x => first.Merge(x.Tags).Count).FirstOrDefault(img => img.ID != first.ID);
+                Image other = v.OrderBy(x => first.Merge(x.Tags).Count).FirstOrDefault(img => img.ID != first.ID);
+                //was descending first (c: 1.9k -> 2.9k)
                 s.Add(new Slide(first, other));
 
                 v.Remove(first);
-                v.Remove(other); 
+                v.Remove(other);
                 bw.ReportProgress((int)Math.Truncate(100 * ((double)(verticals-v.Count) / verticals)));
 
             }
+
+            //foreach (Image item in v)
+              //  s.Add(new Slide(item)); // create slides out of all vertical images
+
+
+
+
             Stopwatch.Start();
             SlideShow show = new SlideShow();
+            int slidesCount = s.Count;
             show.addSlide(s[0]);
+            s.RemoveAt(0);
             int tmpScore = 0;
-            int tmpIndex = 1;
-            while(show.Slides.Count < s.Count)
+            int tmpIndex =  1;
+            Console.WriteLine("Generating Slideshow: ");
+            List<Slide> subSet;
+            while (show.Slides.Count < slidesCount)
             {
                 tmpIndex = 0;
                 tmpScore = 0;
                 Slide current = show.Slides.LastOrDefault();
-                List<Slide> subSet = s.Where((arg) => arg.getTags().Intersect(current.getTags()).Any()).ToList<Slide>();
-
-                Parallel.For(0, subSet.Count, (index)=> {
-                    int sc = current.getScore(s[index]);
-                    if (sc>tmpScore)
+                subSet = s.Where((arg) => arg.getTags().Intersect(current.getTags()).Any()).ToList(); //can sometimes not find slides!
+                //stays the same for a bit, will change ever so slightly, don't recalc everything, remove not good, add new ones (old tags rem, new tags add)
+                if (subSet.Count > 0)
+                {
+                    Parallel.For(0, subSet.Count, (index) =>
                     {
-                        tmpScore = sc;
-                        tmpIndex = index;
-                    }
-                });
+                        int sc = current.getScore(subSet[index]);
+                        if (sc > tmpScore)
+                        {
+                            tmpScore = sc;
+                            tmpIndex = index;
+                        }
+                    });
+                }
+                else
+                {
+                    Console.WriteLine("No common tags found");
+                    if(show.Slides.Count < slidesCount)
+                        Console.WriteLine("LOOOOOP");
+                }
 
-                show.Slides.Add(s[tmpIndex]);
-                bw.ReportProgress((int)Math.Truncate(100 * ((double)show.Slides.Count / s.Count)));
+
+                show.Slides.Add(subSet[tmpIndex]);
+                bw.ReportProgress((int)Math.Truncate(100 * ((double)show.Slides.Count / slidesCount)));
             }
 
 

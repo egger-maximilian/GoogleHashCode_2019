@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GoogleHashCode_2019
 {
@@ -27,6 +28,11 @@ namespace GoogleHashCode_2019
         public void addSlide(Slide s, int index)
         {
             Slides.Insert(index, s);
+        }
+
+        public void saveToFile(string filePath)
+        {
+
         }
     }
 }

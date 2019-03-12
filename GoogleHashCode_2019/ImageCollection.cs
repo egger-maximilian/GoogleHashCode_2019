@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using GoogleHashCode_2019.Properties;
 
 namespace GoogleHashCode_2019
@@ -16,20 +17,35 @@ namespace GoogleHashCode_2019
         "d_pet_pictures.txt"};
         private static char currentSource = '.';
 
-        private Dictionary<string, int> tags;
+
+        private Dictionary<string, List<int>> lookup;
+
+        //lookup table for tags
+        
         private List<Image> images;
-
-
 
         private ImageCollection(char source)
         {
-            tags = new Dictionary<string, int>();
+            lookup = new Dictionary<string, List<int>>();
             loadImagesFromSource(source);
         }
 
-        public static Dictionary<string, int> getTags()
+        public static char getSource() { return currentSource; }
+        public static List<Image> getImagesByTags(List<string> tags)
         {
-            return instance.tags;
+            List<int> indices = new List<int>();
+            List<Image> img = instance.images;
+            List<Image> toReteturn = new List<Image>();
+            foreach (string item in tags)
+                Parallel.ForEach(instance.lookup[item], (index) =>
+                {
+                    toReteturn.Add(img[index]);
+                });
+            return toReteturn;
+        }
+        public static Dictionary<string, List<int>> getLookup()
+        {
+            return instance.lookup;
         }
         public static List<Image> getImages()
         {
@@ -70,22 +86,22 @@ namespace GoogleHashCode_2019
             string[] data = File.ReadAllLines(@"../../sources/" + sources[sourceIndex]);
             Console.WriteLine("Images read. Allocating resources...");
             images = new List<Image>();
-            tags = new Dictionary<string, int>();
             for (int i = 1; i < data.Length; i++)
             {
                 string[] img = data[i].Split(' ');
                 List<string> t = new List<string>(img);
                 t.RemoveAt(0);
                 t.RemoveAt(0);
-                foreach(string s in t)
+                foreach (string s in t)
                 {
-                    if (tags.ContainsKey(s))
-                        tags[s]++;
+                    if (lookup.ContainsKey(s))
+                        lookup[s].Add(i);
                     else
-                        tags[s] = 1;
+                        lookup.Add(s, new List<int>() { i });
                 }
                 images.Add(new Image(t,img[0][0], images.Count));
             }
+            currentSource = source;
             Console.WriteLine("Images loaded.");
         }
     }

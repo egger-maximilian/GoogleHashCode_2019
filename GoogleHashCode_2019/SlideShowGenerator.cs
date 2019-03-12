@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace GoogleHashCode_2019.Properties
     {
         private System.Diagnostics.Stopwatch Stopwatch;
         private BackgroundWorker bw;
+        private SlideShow show;
         public SlideShowGenerator()
         {
             Stopwatch = new System.Diagnostics.Stopwatch();
@@ -88,23 +90,51 @@ namespace GoogleHashCode_2019.Properties
 
 
             Stopwatch.Start();
-            SlideShow show = new SlideShow();
-            int slidesCount = s.Count;
+            show = new SlideShow();
+            Dictionary<string, List<int>> lookup = new Dictionary<string, List<int>>();
+            for (int i = 0; i < s.Count; i++)
+            {
+                foreach(string t in s[i].getTags())
+                {
+                    if (lookup.ContainsKey(t))
+                        lookup[t].Add(i);
+                    else
+                        lookup[t] = new List<int>() { i };
+                }
+            }
             show.addSlide(s[0]);
+            int slidesCount = s.Count;
             s.RemoveAt(0);
             int tmpScore = 0;
-            int tmpIndex =  1;
+            int tmpIndex =  0;
             Console.WriteLine("Generating Slideshow: ");
-            List<Slide> subSet;
-            while (show.Slides.Count < slidesCount)
+            List<Slide> subSet=new List<Slide>();
+            Slide nextSlide=null;
+            List<int> relevantIndices = new List<int>();
+            while (s.Count>0)
             {
                 tmpIndex = 0;
                 tmpScore = 0;
                 Slide current = show.Slides.LastOrDefault();
                 subSet = s.Where((arg) => arg.getTags().Intersect(current.getTags()).Any()).ToList(); //can sometimes not find slides!
+                //foreach (string tg in current.getTags())
+                 //   relevantIndices.AddRange(lookup[tg]);
+                //foreach (int ind in relevantIndices)
+                 //   subSet.Add(s[ind]);
+                //subSet = s.Where((arg) => arg.Images.Intersect(lookup.).Any());
                 //stays the same for a bit, will change ever so slightly, don't recalc everything, remove not good, add new ones (old tags rem, new tags add)
-                if (subSet.Count > 0)
+                if (subSet.Count >  0)
                 {
+                   /* Parallel.ForEach(subSet, (arg1, arg2, arg3) => {
+                        if (current.getScore(arg1) > tmpScore)
+                        {
+                            tmpScore = current.getScore(arg1);
+                            nextSlide = arg1;
+                        }
+                    });
+                    show.addSlide(nextSlide);
+                    s.Remove(nextSlide);
+                   */ 
                     Parallel.For(0, subSet.Count, (index) =>
                     {
                         int sc = current.getScore(subSet[index]);
@@ -113,17 +143,22 @@ namespace GoogleHashCode_2019.Properties
                             tmpScore = sc;
                             tmpIndex = index;
                         }
-                    });
-                }
+                    }); 
+                    show.Slides.Add(subSet[tmpIndex]);
+
+                    s.Remove(subSet[tmpIndex]);
+                
+                    }
                 else
                 {
                     Console.WriteLine("No common tags found");
-                    if(show.Slides.Count < slidesCount)
+                    if(show.Slides.Count < s.Count)
                         Console.WriteLine("LOOOOOP");
+                    show.Slides.Add(s.FirstOrDefault());
+                    s.RemoveAt(0);
                 }
 
 
-                show.Slides.Add(subSet[tmpIndex]);
                 bw.ReportProgress((int)Math.Truncate(100 * ((double)show.Slides.Count / slidesCount)));
             }
 
@@ -147,6 +182,7 @@ namespace GoogleHashCode_2019.Properties
             Stopwatch.Stop();
             Console.WriteLine("Done!\nScore: "+show.getScore());
             Console.WriteLine("Time elapsed: "+Stopwatch.Elapsed.ToString());
+
         }
 
 
@@ -157,6 +193,9 @@ namespace GoogleHashCode_2019.Properties
         void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             Console.WriteLine("Complete!");
+            Console.WriteLine("Saving slideshow to file...");
+            show.saveToFile();
+            Console.WriteLine("Done.");
         }
 
     }

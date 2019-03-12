@@ -7,30 +7,31 @@ namespace GoogleHashCode_2019
     public class Slide
     {
         public Image[] Images;
+        private List<string> tags;
 
         public Slide(Image i)
         {
+            tags = new List<string>();
             Images = new Image[2];
             Images[0] = i;
             Images[1] = null;
+            tags.AddRange(i.Tags);
         }
         public Slide(Image i1, Image i2)
         {
+            tags = new List<string>();
             Images = new Image[2];
             Images[0] = i1;
             Images[1] = i2;
+            tags.AddRange(i1.Tags);
+            tags.AddRange(i2.Tags);
         }
 
         public List<string> getTags()
         {
-            if (Images[1] == null)
-                return new List<string>(Images[0].Tags);
-            else { 
-            List<string> tags = new List<string>(Images[0].Tags);
-            tags.AddRange(Images[1].Tags);
-                return tags;
+            return tags;
         }
-        }
+
 
         public int getScore(Slide left, Slide right)
         {

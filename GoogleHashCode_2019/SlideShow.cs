@@ -30,9 +30,15 @@ namespace GoogleHashCode_2019
             Slides.Insert(index, s);
         }
 
-        public void saveToFile(string filePath)
+        public void saveToFile(string fileName="")
         {
-
+            if (fileName == "")
+                fileName = "slideshow_" + ImageCollection.getSource() + "_" + getScore()+".txt";
+            List<string> data = new List<string>();
+            data.Add(Slides.Count.ToString());
+            foreach (Slide item in Slides)
+                data.Add(item.Images[0].ID.ToString() +" "+ (item.Images[1] != null ? item.Images[1].ID.ToString() : ""));
+            File.WriteAllLines(@"../../sources/"+fileName, data);
         }
     }
 }

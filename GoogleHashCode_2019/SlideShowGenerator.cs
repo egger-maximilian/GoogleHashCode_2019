@@ -55,6 +55,8 @@ namespace GoogleHashCode_2019.Properties
             }
         }
 
+
+
         void Bw_DoWork(object sender, DoWorkEventArgs e)
         {
             List<Slide> s = new List<Slide>();
@@ -109,18 +111,17 @@ namespace GoogleHashCode_2019.Properties
             int tmpIndex =  0;
             Console.WriteLine("Generating Slideshow: ");
             List<Slide> subSet=new List<Slide>();
-            Slide nextSlide=null;
             List<int> relevantIndices = new List<int>();
-            while (s.Count>0)
+            while (s.Count > 0)
             {
                 tmpIndex = 0;
                 tmpScore = 0;
                 Slide current = show.Slides.LastOrDefault();
-                subSet = s.Where((arg) => arg.getTags().Intersect(current.getTags()).Any()).ToList(); //can sometimes not find slides!
-                //foreach (string tg in current.getTags())
-                 //   relevantIndices.AddRange(lookup[tg]);
-                //foreach (int ind in relevantIndices)
-                 //   subSet.Add(s[ind]);
+                //subSet = s.Where((arg) => arg.getTags().Intersect(current.getTags()).Any()).ToList(); //can sometimes not find slides!
+                Parallel.ForEach(lookup.Where((arg) => current.getTags().Contains(arg.Key)), (arg1, arg2, arg3) => {
+                    relevantIndices.AddRange(arg1.Value);
+                });
+                
                 //subSet = s.Where((arg) => arg.Images.Intersect(lookup.).Any());
                 //stays the same for a bit, will change ever so slightly, don't recalc everything, remove not good, add new ones (old tags rem, new tags add)
                 if (subSet.Count >  0)
